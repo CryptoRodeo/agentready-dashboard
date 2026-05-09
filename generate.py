@@ -122,8 +122,12 @@ def fetch_github(repo_config: dict) -> dict | None:
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
+    verify_ssl = repo_config.get("verify_ssl", True)
+    if not verify_ssl:
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
     try:
-        resp = requests.get(url, headers=headers, params=params, timeout=30)
+        resp = requests.get(url, headers=headers, params=params, timeout=30, verify=verify_ssl)
         resp.raise_for_status()
         data = resp.json()
         content = base64.b64decode(data["content"]).decode("utf-8")
