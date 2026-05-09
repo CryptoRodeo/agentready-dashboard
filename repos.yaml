@@ -1,5 +1,5 @@
 title: "Agent Readiness Dashboard"
-#org: ""
+org: "TSD-UI"
 
 repositories:
   # GitLab example
@@ -13,3 +13,25 @@ repositories:
   #   type: github
   #   repo: my-org/my-service
   #   branch: main
+
+  # Calunga UI
+  - name: ui-packages.redhat.com
+    type: gitlab
+    host: https://gitlab.cee.redhat.com
+    project: hosted-pulp/ui-packages.redhat.com
+    branch: agentready-check
+
+  # RHTAS UI
+  - name: rhtas-console-ui
+    type: local
+    path: /home/bramos/work/rhtas-console-ui
+
+  # Trustify UI
+  - name: trustify-ui
+    type: local
+    path: /home/bramos/work/trustify-ui
+
+  # TSD-UI
+  - name: tsd-ui
+    type: local
+    path: /home/bramos/work/tsd-ui
