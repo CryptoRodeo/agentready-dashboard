@@ -23,15 +23,21 @@ repositories:
 
   # RHTAS UI
   - name: rhtas-console-ui
-    type: local
-    path: /home/bramos/work/rhtas-console-ui
+    type: github
+    host: https://github.com
+    project: securesign/rhtas-console-ui
+    branch: main
 
   # Trustify UI
   - name: trustify-ui
-    type: local
-    path: /home/bramos/work/trustify-ui
+    type: github
+    host: https://github.com
+    project: guacsec/trustify-ui
+    branch: main
 
   # TSD-UI
   - name: tsd-ui
-    type: local
-    path: /home/bramos/work/tsd-ui
+    type: github
+    host: https://github.com
+    project: tsd-ui/tsd-ui
+    branch: main
