@@ -1,41 +1,16 @@
 title: "Agent Readiness Dashboard"
-org: "TSD-UI"
+#org: ""
 
 repositories:
+  # GitHub example
+  - name: agentready
+    type: github
+    repo: cryptorodeo/agentready
+    branch: demo
+
   # GitLab example
   # - name: ui-dashboard
   #   type: gitlab
   #   project: my-group/ui-dashboard
   #   branch: main
 
-  # GitHub example
-  # - name: my-service
-  #   type: github
-  #   repo: my-org/my-service
-  #   branch: main
-
-  # Calunga UI
-  - name: ui-packages.redhat.com
-    type: gitlab
-    host: https://gitlab.cee.redhat.com
-    project: hosted-pulp/ui-packages.redhat.com
-    branch: agentready-check
-    verify_ssl: false
-
-  # RHTAS UI
-  - name: rhtas-console-ui
-    type: github
-    repo: securesign/rhtas-console-ui
-    branch: main
-
-  # Trustify UI
-  - name: trustify-ui
-    type: github
-    repo: guacsec/trustify-ui
-    branch: main
-
-  # TSD-UI
-  - name: tsd-ui
-    type: github
-    repo: tsd-ui/tsd-ui
-    branch: main
