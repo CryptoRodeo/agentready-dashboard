@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-elevated: #334155;
+            --border: #475569;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --primary: #3b82f6;
+            --shadow: rgba(0,0,0,0.3);
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg: #f8fafc;
+                --surface: #ffffff;
+                --surface-elevated: #f1f5f9;
+                --border: #e2e8f0;
+                --text: #0f172a;
+                --text-secondary: #475569;
+                --text-muted: #94a3b8;
+                --primary: #2563eb;
+                --shadow: rgba(0,0,0,0.08);
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 32px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        header .subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Summary cards */
+        .summary-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .summary-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .summary-card .label {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        /* Table */
+        .table-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--surface-elevated);
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        th:hover { color: var(--primary); }
+
+        th .sort-arrow {
+            margin-left: 4px;
+            opacity: 0.4;
+        }
+
+        th.sorted .sort-arrow { opacity: 1; }
+
+        td {
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        tr.repo-row {
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        tr.repo-row:hover {
+            background: var(--surface-elevated);
+        }
+
+        /* Certification badge */
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-platinum { background: #b9f2ff; color: #1a1a2e; }
+        .badge-gold { background: #ffd700; color: #1a1a2e; }
+        .badge-silver { background: #c0c0c0; color: #1a1a2e; }
+        .badge-bronze { background: #cd7f32; color: #ffffff; }
+        .badge-needsimprovement { background: #ff9800; color: #ffffff; }
+        .badge-none { background: #9e9e9e; color: #ffffff; }
+
+        /* Score display */
+        .score {
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .score-high { color: #4caf50; }
+        .score-mid { color: #ff9800; }
+        .score-low { color: #f44336; }
+        .score-none { color: var(--text-muted); }
+
+        /* Detail panel */
+        .detail-row {
+            display: none;
+        }
+
+        .detail-row.open {
+            display: table-row;
+        }
+
+        .detail-content {
+            padding: 24px;
+            background: var(--surface-elevated);
+        }
+
+        .detail-header {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .detail-stat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 24px;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .detail-stat .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .detail-stat .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Tier sections */
+        .tier-section {
+            margin-top: 20px;
+        }
+
+        .tier-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 8px;
+        }
+
+        .finding-row {
+            display: grid;
+            grid-template-columns: 24px 1fr 80px 120px 140px;
+            gap: 12px;
+            align-items: center;
+            padding: 8px 4px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .finding-row:last-child { border-bottom: none; }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-pass { background: #4caf50; }
+        .status-fail { background: #f44336; }
+        .status-skipped { background: #9e9e9e; }
+        .status-error { background: #ff9800; }
+        .status-not_applicable { background: #2196f3; }
+
+        .finding-name { font-weight: 500; }
+        .finding-status { text-transform: capitalize; font-size: 12px; color: var(--text-secondary); }
+        .finding-score { font-variant-numeric: tabular-nums; text-align: right; }
+        .finding-measured {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .finding-detail-toggle {
+            cursor: pointer;
+        }
+
+        .finding-detail-toggle:hover .finding-name {
+            color: var(--primary);
+        }
+
+        .finding-extra {
+            display: none;
+            grid-column: 1 / -1;
+            padding: 12px 16px;
+            background: var(--surface);
+            border-radius: 6px;
+            margin: 4px 0 8px;
+            font-size: 13px;
+        }
+
+        .finding-extra.open { display: block; }
+
+        .finding-extra h5 {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin: 8px 0 4px;
+        }
+
+        .finding-extra h5:first-child { margin-top: 0; }
+
+        .finding-extra ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .finding-extra li {
+            padding: 2px 0;
+            color: var(--text-secondary);
+        }
+
+        .finding-extra li::before {
+            content: "→ ";
+            color: var(--text-muted);
+        }
+
+        .remediation-box {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+
+        .remediation-box .rem-summary {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .remediation-box code {
+            display: block;
+            background: var(--surface);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 4px 0;
+            font-family: 'Courier New', monospace;
+            color: var(--text);
+            overflow-x: auto;
+        }
+
+        /* Repo info in detail */
+        .repo-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .repo-meta span {
+            background: var(--surface);
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        /* No data state */
+        .no-data {
+            text-align: center;
+            padding: 32px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 24px 0;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .summary-row { grid-template-columns: repeat(2, 1fr); }
+            .finding-row { grid-template-columns: 24px 1fr 60px; }
+            .finding-measured, .finding-score { display: none; }
+            .detail-header { flex-direction: column; }
+        }
+
+        /* Expand indicator */
+        .expand-icon {
+            display: inline-block;
+            width: 20px;
+            transition: transform 0.2s;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .expand-icon.open { transform: rotate(90deg); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{{ title }}</h1>
+            {% if org %}<div class="subtitle" style="font-size: 16px; color: var(--text-secondary); margin-bottom: 4px;">{{ org }}</div>{% endif %}
+            <div class="subtitle">Generated {{ generated_at }}</div>
+        </header>
+
+        {% set repos_with_data = repositories | selectattr('has_data') | list %}
+        {% set total_repos = repositories | length %}
+        {% set assessed_repos = repos_with_data | length %}
+        {% if repos_with_data %}
+            {% set avg_score = (repos_with_data | map(attribute='overall_score') | select('number') | list | sum) / (repos_with_data | length) %}
+        {% else %}
+            {% set avg_score = 0 %}
+        {% endif %}
+
+        <div class="summary-row">
+            <div class="summary-card">
+                <div class="label">Repositories</div>
+                <div class="value">{{ total_repos }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">Assessed</div>
+                <div class="value">{{ assessed_repos }} / {{ total_repos }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">Average Score</div>
+                <div class="value {% if avg_score >= 75 %}score-high{% elif avg_score >= 40 %}score-mid{% elif assessed_repos > 0 %}score-low{% else %}score-none{% endif %}">
+                    {% if assessed_repos > 0 %}{{ "%.1f" | format(avg_score) }}{% else %}—{% endif %}
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="label">Platinum</div>
+                <div class="value">{{ repos_with_data | selectattr('certification_level', 'equalto', 'Platinum') | list | length }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">Gold</div>
+                <div class="value">{{ repos_with_data | selectattr('certification_level', 'equalto', 'Gold') | list | length }}</div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="repo-table">
+                <thead>
+                    <tr>
+                        <th data-sort="name" class="sorted">Repository <span class="sort-arrow">▲</span></th>
+                        <th data-sort="score">Score <span class="sort-arrow">▲</span></th>
+                        <th data-sort="cert">Certification <span class="sort-arrow">▲</span></th>
+                        <th data-sort="assessed">Assessed <span class="sort-arrow">▲</span></th>
+                        <th data-sort="type">Source <span class="sort-arrow">▲</span></th>
+                        <th data-sort="timestamp">Last Updated <span class="sort-arrow">▲</span></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for repo in repositories %}
+                    <tr class="repo-row" data-index="{{ loop.index0 }}"
+                        data-name="{{ repo.name }}"
+                        data-score="{{ repo.overall_score if repo.overall_score is not none else -1 }}"
+                        data-cert="{{ repo.certification_level }}"
+                        data-assessed="{{ repo.attributes_assessed }}"
+                        data-type="{{ repo.type }}"
+                        data-timestamp="{{ repo.timestamp }}">
+                        <td><strong>{{ repo.name }}</strong></td>
+                        <td>
+                            {% if repo.has_data and repo.overall_score is not none %}
+                                <span class="score {% if repo.overall_score >= 75 %}score-high{% elif repo.overall_score >= 40 %}score-mid{% else %}score-low{% endif %}">
+                                    {{ "%.1f" | format(repo.overall_score) }}
+                                </span>
+                            {% else %}
+                                <span class="score score-none">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ repo.certification_level | lower | replace(' ', '') | replace('needs improvement', 'needsimprovement') }}">
+                                {{ repo.certification_level | replace('NeedsImprovement', 'Needs Improvement') }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if repo.has_data %}
+                                {{ repo.attributes_assessed }} / {{ repo.attributes_total }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>{{ repo.type }}</td>
+                        <td>{{ repo.timestamp }}</td>
+                        <td><span class="expand-icon" id="icon-{{ loop.index0 }}">▶</span></td>
+                    </tr>
+                    <tr class="detail-row" id="detail-{{ loop.index0 }}">
+                        <td colspan="7">
+                            <div class="detail-content">
+                                {% if repo.has_data %}
+                                    {% if repo.repository %}
+                                    <div class="repo-meta">
+                                        {% if repo.repository.branch %}
+                                        <span>Branch: {{ repo.repository.branch }}</span>
+                                        {% endif %}
+                                        {% if repo.repository.languages %}
+                                        <span>Languages: {{ repo.repository.languages.keys() | join(', ') }}</span>
+                                        {% endif %}
+                                        {% if repo.repository.total_files %}
+                                        <span>{{ repo.repository.total_files }} files</span>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+
+                                    <div class="detail-header">
+                                        <div class="detail-stat">
+                                            <div class="stat-label">Score</div>
+                                            <div class="stat-value {% if repo.overall_score >= 75 %}score-high{% elif repo.overall_score >= 40 %}score-mid{% else %}score-low{% endif %}">
+                                                {{ "%.1f" | format(repo.overall_score) }}
+                                            </div>
+                                        </div>
+                                        <div class="detail-stat">
+                                            <div class="stat-label">Certification</div>
+                                            <div class="stat-value">
+                                                <span class="badge badge-{{ repo.certification_level | lower | replace(' ', '') | replace('needs improvement', 'needsimprovement') }}">
+                                                    {{ repo.certification_level | replace('NeedsImprovement', 'Needs Improvement') }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="detail-stat">
+                                            <div class="stat-label">Assessed</div>
+                                            <div class="stat-value">{{ repo.attributes_assessed }} / {{ repo.attributes_total }}</div>
+                                        </div>
+                                    </div>
+
+                                    {% for tier_num, tier_findings in repo.tiers.items() %}
+                                    <div class="tier-section">
+                                        <div class="tier-title">Tier {{ tier_num }} — {{ tier_names.get(tier_num, "Other") }}</div>
+                                        {% for finding in tier_findings %}
+                                        <div class="finding-detail-toggle" onclick="toggleFinding(this)">
+                                            <div class="finding-row">
+                                                <span class="status-dot status-{{ finding.status }}"></span>
+                                                <span class="finding-name">{{ finding.attribute.name }}</span>
+                                                <span class="finding-status">{{ finding.status | replace('_', ' ') }}</span>
+                                                <span class="finding-score">
+                                                    {% if finding.score is not none %}{{ "%.0f" | format(finding.score) }}{% else %}—{% endif %}
+                                                </span>
+                                                <span class="finding-measured" title="{{ finding.measured_value or '' }}">
+                                                    {{ finding.measured_value or '—' }}
+                                                </span>
+                                            </div>
+                                            <div class="finding-extra">
+                                                {% if finding.evidence %}
+                                                <h5>Evidence</h5>
+                                                <ul>
+                                                    {% for ev in finding.evidence %}
+                                                    <li>{{ ev }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                                {% endif %}
+                                                {% if finding.threshold %}
+                                                <h5>Threshold</h5>
+                                                <ul><li>{{ finding.threshold }}</li></ul>
+                                                {% endif %}
+                                                {% if finding.remediation %}
+                                                <div class="remediation-box">
+                                                    <div class="rem-summary">{{ finding.remediation.summary }}</div>
+                                                    {% if finding.remediation.steps %}
+                                                    <h5>Steps</h5>
+                                                    <ul>
+                                                        {% for step in finding.remediation.steps %}
+                                                        <li>{{ step }}</li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                    {% endif %}
+                                                    {% if finding.remediation.commands %}
+                                                    <h5>Commands</h5>
+                                                    {% for cmd in finding.remediation.commands %}
+                                                    <code>{{ cmd }}</code>
+                                                    {% endfor %}
+                                                    {% endif %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="no-data">
+                                        No assessment data available for this repository.<br>
+                                        Run <code>agentready assess &lt;repo-path&gt;</code> to generate assessment data.
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            Generated by <strong>AgentReady Dashboard</strong> &middot; {{ generated_at }}
+        </footer>
+    </div>
+
+    <script>
+        document.querySelectorAll('.repo-row').forEach(row => {
+            row.addEventListener('click', () => {
+                const idx = row.dataset.index;
+                const detail = document.getElementById('detail-' + idx);
+                const icon = document.getElementById('icon-' + idx);
+                detail.classList.toggle('open');
+                icon.classList.toggle('open');
+            });
+        });
+
+        function toggleFinding(el) {
+            event.stopPropagation();
+            const extra = el.querySelector('.finding-extra');
+            if (extra) extra.classList.toggle('open');
+        }
+
+        // Sorting
+        const table = document.getElementById('repo-table');
+        const headers = table.querySelectorAll('th[data-sort]');
+        let currentSort = 'name';
+        let sortAsc = true;
+
+        headers.forEach(th => {
+            th.addEventListener('click', () => {
+                const key = th.dataset.sort;
+                if (currentSort === key) {
+                    sortAsc = !sortAsc;
+                } else {
+                    currentSort = key;
+                    sortAsc = true;
+                }
+
+                headers.forEach(h => h.classList.remove('sorted'));
+                th.classList.add('sorted');
+                th.querySelector('.sort-arrow').textContent = sortAsc ? '▲' : '▼';
+
+                const tbody = table.querySelector('tbody');
+                const rowPairs = [];
+                const rows = tbody.querySelectorAll('tr');
+                for (let i = 0; i < rows.length; i += 2) {
+                    rowPairs.push([rows[i], rows[i + 1]]);
+                }
+
+                rowPairs.sort((a, b) => {
+                    const aRow = a[0], bRow = b[0];
+                    let aVal, bVal;
+
+                    if (key === 'score') {
+                        aVal = parseFloat(aRow.dataset.score);
+                        bVal = parseFloat(bRow.dataset.score);
+                    } else if (key === 'assessed') {
+                        aVal = parseInt(aRow.dataset.assessed);
+                        bVal = parseInt(bRow.dataset.assessed);
+                    } else if (key === 'name') {
+                        aVal = aRow.dataset.name.toLowerCase();
+                        bVal = bRow.dataset.name.toLowerCase();
+                    } else if (key === 'cert') {
+                        const order = {'Platinum': 5, 'Gold': 4, 'Silver': 3, 'Bronze': 2, 'NeedsImprovement': 1, 'None': 0};
+                        aVal = order[aRow.dataset.cert] || 0;
+                        bVal = order[bRow.dataset.cert] || 0;
+                    } else {
+                        aVal = aRow.dataset[key] || '';
+                        bVal = bRow.dataset[key] || '';
+                    }
+
+                    if (aVal < bVal) return sortAsc ? -1 : 1;
+                    if (aVal > bVal) return sortAsc ? 1 : -1;
+                    return 0;
+                });
+
+                rowPairs.forEach(pair => {
+                    tbody.appendChild(pair[0]);
+                    tbody.appendChild(pair[1]);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

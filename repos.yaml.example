@@ -1,0 +1,89 @@
+# =============================================================================
+# Agent Readiness Dashboard — repos.yaml example
+# =============================================================================
+# This file configures which repositories appear on the dashboard.
+# The generator fetches .agentready/assessment-latest.json from each repo.
+#
+# Top-level fields:
+#   title  — dashboard heading (default: "Agent Readiness Dashboard")
+#   org    — organization name shown in the header
+#
+# Environment variables used by the fetchers:
+#   GITLAB_TOKEN  — GitLab personal/project access token (also reads CI_JOB_TOKEN)
+#   GITHUB_TOKEN  — GitHub personal access token or Actions token
+# =============================================================================
+
+title: "My Team — Agent Readiness Dashboard"
+org: "platform-engineering"
+
+repositories:
+
+  # ---------------------------------------------------------------------------
+  # LOCAL repositories
+  # ---------------------------------------------------------------------------
+  # Use type: local when the repo is checked out on the same machine that runs
+  # the generator. The "path" field points to the repo root directory.
+  # No authentication needed.
+
+  - name: my-local-service
+    type: local
+    path: /home/dev/projects/my-local-service    # absolute path to repo root
+
+  - name: another-local-repo
+    type: local
+    path: ../sibling-repo                        # relative paths work too
+
+  # ---------------------------------------------------------------------------
+  # GITLAB repositories
+  # ---------------------------------------------------------------------------
+  # Fetches via GitLab REST API.
+  #
+  # Required fields:
+  #   project  — full path (group/subgroup/project), URL-encoded automatically
+  #
+  # Optional fields:
+  #   host     — GitLab instance URL (default: https://gitlab.com)
+  #   branch   — branch to read from (default: main)
+
+  # Public GitLab.com repo — no token needed if the project is public
+  - name: public-gl-project
+    type: gitlab
+    project: my-group/my-project
+    branch: main
+
+  # Self-hosted GitLab with a custom host
+  - name: internal-service
+    type: gitlab
+    host: https://gitlab.example.com
+    project: platform/backend/internal-service
+    branch: main
+
+  # Nested subgroups work — just use the full path
+  - name: deeply-nested-project
+    type: gitlab
+    host: https://gitlab.example.com
+    project: org/team/sub-team/my-app
+    branch: develop                              # any branch, not just main
+
+  # ---------------------------------------------------------------------------
+  # GITHUB repositories
+  # ---------------------------------------------------------------------------
+  # Fetches via GitHub REST API (api.github.com).
+  #
+  # Required fields:
+  #   repo  — owner/repo format
+  #
+  # Optional fields:
+  #   branch  — branch to read from (default: main)
+
+  # Public GitHub repo — no token needed if public
+  - name: open-source-tool
+    type: github
+    repo: my-org/open-source-tool
+    branch: main
+
+  # Private GitHub repo — set GITHUB_TOKEN env var
+  - name: private-backend
+    type: github
+    repo: my-org/private-backend
+    branch: release                              # read from a non-default branch

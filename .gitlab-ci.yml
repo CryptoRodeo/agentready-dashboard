@@ -1,0 +1,17 @@
+default:
+  tags: [itup-alm-x86]
+
+pages:
+  stage: deploy
+  image: registry.access.redhat.com/ubi10/ubi:latest
+  before_script:
+    - dnf -y install python3-pip
+    - pip3 install --break-system-packages -r requirements.txt
+  script:
+    - python3 generate.py
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "schedule"

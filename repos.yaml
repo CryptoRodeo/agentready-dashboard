@@ -1,0 +1,15 @@
+title: "Agent Readiness Dashboard"
+#org: ""
+
+repositories:
+  # GitLab example
+  # - name: ui-dashboard
+  #   type: gitlab
+  #   project: my-group/ui-dashboard
+  #   branch: main
+
+  # GitHub example
+  # - name: my-service
+  #   type: github
+  #   repo: my-org/my-service
+  #   branch: main
