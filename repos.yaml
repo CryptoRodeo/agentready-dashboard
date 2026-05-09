@@ -20,24 +20,22 @@ repositories:
     host: https://gitlab.cee.redhat.com
     project: hosted-pulp/ui-packages.redhat.com
     branch: agentready-check
+    verify_ssl: false
 
   # RHTAS UI
   - name: rhtas-console-ui
     type: github
-    host: https://github.com
-    project: securesign/rhtas-console-ui
+    repo: securesign/rhtas-console-ui
     branch: main
 
   # Trustify UI
   - name: trustify-ui
     type: github
-    host: https://github.com
-    project: guacsec/trustify-ui
+    repo: guacsec/trustify-ui
     branch: main
 
   # TSD-UI
   - name: tsd-ui
     type: github
-    host: https://github.com
-    project: tsd-ui/tsd-ui
+    repo: tsd-ui/tsd-ui
     branch: main

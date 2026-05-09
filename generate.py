@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
+import urllib3
 import yaml
 from jinja2 import Environment, FileSystemLoader
 
@@ -78,8 +79,12 @@ def fetch_gitlab(repo_config: dict) -> dict | None:
     if token:
         headers["PRIVATE-TOKEN"] = token
 
+    verify_ssl = repo_config.get("verify_ssl", True)
+    if not verify_ssl:
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
     try:
-        resp = requests.get(url, headers=headers, params=params, timeout=30)
+        resp = requests.get(url, headers=headers, params=params, timeout=30, verify=verify_ssl)
         resp.raise_for_status()
         text = resp.text.strip()
 
@@ -93,7 +98,7 @@ def fetch_gitlab(repo_config: dict) -> dict | None:
                 f".agentready/{text}", safe=""
             )
             ref_url = f"{host}/api/v4/projects/{project}/repository/files/{ref_path}/raw"
-            resp2 = requests.get(ref_url, headers=headers, params=params, timeout=30)
+            resp2 = requests.get(ref_url, headers=headers, params=params, timeout=30, verify=verify_ssl)
             resp2.raise_for_status()
             return resp2.json()
 

@@ -42,8 +42,9 @@ repositories:
   #   project  — full path (group/subgroup/project), URL-encoded automatically
   #
   # Optional fields:
-  #   host     — GitLab instance URL (default: https://gitlab.com)
-  #   branch   — branch to read from (default: main)
+  #   host       — GitLab instance URL (default: https://gitlab.com)
+  #   branch     — branch to read from (default: main)
+  #   verify_ssl — set to false for self-signed certificates (default: true)
 
   # Public GitLab.com repo — no token needed if the project is public
   - name: public-gl-project
@@ -57,6 +58,7 @@ repositories:
     host: https://gitlab.example.com
     project: platform/backend/internal-service
     branch: main
+    verify_ssl: false                              # for self-signed certs
 
   # Nested subgroups work — just use the full path
   - name: deeply-nested-project
