@@ -1,5 +1,5 @@
 default:
-  tags: [itup-alm-x86]
+  tags: []
 
 pages:
   stage: deploy
