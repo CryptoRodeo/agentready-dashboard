@@ -1,4 +1,4 @@
-# AgentReady Dashboard
+# AgentReady Fleet
 
 A static dashboard that aggregates [AgentReady](https://github.com/ambient-code/agentready) assessment scores across your repositories into a single view. Track how well your codebases are prepared for AI-assisted development — at a glance, across teams.
 
