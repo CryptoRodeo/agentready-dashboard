@@ -11,7 +11,7 @@ This dashboard solves that by:
 - **Centralizing visibility** — one page shows every repo's readiness score, certification level, and trend
 - **Highlighting gaps** — expandable per-repo detail surfaces failing checks with remediation steps and commands
 - **Requiring zero infrastructure** — generates a single static HTML file; deploy to GitLab Pages, GitHub Pages, or any static host
-- **Staying current automatically** — CI pipelines regenerate on push and on a schedule (every 6 hours by default)
+- **Staying current automatically** — CI pipelines regenerate on push and on a weekly schedule (Wednesdays at 08:00 UTC)
 
 ## Features
 
@@ -70,7 +70,7 @@ repositories:
 
 ### CI/CD
 
-Both GitLab CI (`.gitlab-ci.yml`) and GitHub Actions (`.github/workflows/pages.yml`) configs are included. GitHub Actions runs on push to `main`, every 6 hours, and on manual dispatch.
+Both GitLab CI (`.gitlab-ci.yml`) and GitHub Actions (`.github/workflows/pages.yml`) configs are included. GitHub Actions runs on push to `main`, weekly on Wednesdays at 08:00 UTC, and on manual dispatch. GitLab CI supports scheduled pipelines configured via the GitLab UI.
 
 ## Configuration
 
