@@ -8,9 +8,10 @@ repositories:
     repo: cryptorodeo/agentready
     branch: demo
 
-  - name: agentready
+  - name: agentready-fleet
     type: github
     repo: cryptorodeo/agentready-feet
+    branch: main
 
   # GitLab example
   # - name: ui-dashboard
