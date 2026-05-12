@@ -10,7 +10,7 @@ repositories:
 
   - name: agentready-fleet
     type: github
-    repo: cryptorodeo/agentready-feet
+    repo: cryptorodeo/agentready-fleet
     branch: main
 
   # GitLab example
