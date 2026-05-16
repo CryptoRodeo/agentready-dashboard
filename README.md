@@ -33,6 +33,20 @@ python generate.py
 open public/index.html
 ```
 
+## Usage
+
+```bash
+# Generate dashboard from default repos.yaml
+python generate.py
+
+# Generate from a custom config file
+python generate.py path/to/repos.yaml
+```
+
+Output is written to `public/index.html`. Open it in a browser or deploy to any static host.
+
+Set `GITLAB_TOKEN` and/or `GITHUB_TOKEN` environment variables to access private repositories.
+
 ## Setup
 
 1. Fork or clone this repo
